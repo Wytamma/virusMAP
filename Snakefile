@@ -154,7 +154,7 @@ rule STAR:
     threads: 4
     shell:
         """
-        STAR --runThreadN 1 \
+        STAR --runThreadN {threads} \
         --genomeDir data/STAR_genome/{wildcards.genbank_id} \
         --readFilesIn {input.trimmed_reads} \
         --outSAMtype BAM SortedByCoordinate \
