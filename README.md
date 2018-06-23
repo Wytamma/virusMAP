@@ -25,7 +25,7 @@ $ `snakemake`
 `
     snakemake -p \
     --latency-wait 60 \
-    --cluster "qsub -o /homes/22/jc220896/virusMAP/qsublogs/ -e /homes/22/jc220896/virusMAP/qsublogs/" \
+    --cluster "qsub -d /homes/22/jc220896/virusMAP/ -o /homes/22/jc220896/virusMAP/qsublogs/ -e /homes/22/jc220896/virusMAP/qsublogs/" \
     --jobscript jobscript.py  \
     -j 10
 `

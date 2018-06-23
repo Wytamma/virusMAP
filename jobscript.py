@@ -15,16 +15,12 @@ if threads in job_properties:
 else:
     threads = 1
 
-if params in job_properties:
-    pmem = job_properties[params][pmem]
-else:
-    pmem = '2GB'
-
+print('THEADS:', threads)
 # access property defined in the cluster configuration file (Snakemake >=3.6.0)
 #job_properties["cluster"]["time"]
 
 os.system(
     """qsub -v PATH='/homes/22/jc220896/miniconda3/envs/virusMAP/bin:$PATH' \
-    -l pmem={{pmem}} \
+    -l pmem=2GB \
     -l nodes=1:ppn={{threads}} \
-    {{jobscript}}""".format(jobscript=jobscript, threads=threads, pmem=pmem)
+    {{jobscript}}""".format(jobscript=jobscript, threads=threads)
