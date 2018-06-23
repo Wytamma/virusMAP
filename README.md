@@ -22,9 +22,9 @@ $ `snakemake`
 
 ### Downloading data
 
-- curl is backup
-- fasta-dump freaked out and downloaded 32Gb of data instead of the 4Gb reads...
-- biopython - it's python
+- Curl is backup
+- Fasta-dump freaked out and downloaded 32Gb of data instead of the 4Gb reads...
+- Biopython - it's python
 
 ### Pre-align-QC
 
