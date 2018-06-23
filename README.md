@@ -12,17 +12,35 @@ First clone this repo...
 
 $ `bash setup.sh`
 
+## Run
+
+Set `SRA_IDS` and `VIRAL_GENBANK_IDS` in Snakefile
+
+$ `snakemake`
+
 ## Downloading data
 
 - curl is backup
 - fasta-dump freaked out and downloaded 32Gb of data instead of the 4Gb reads...
 - biopython - it's python
 
-## Run
+## Pre-align-QC
 
-Set `SRA_IDS` and `VIRAL_GENBANK_IDS` in Snakefile
+- FASTQC
+- Trim Galore!
 
-$ `snakemake`
+## Mapping
+
+- STAR
+- Maybe Magic-Blast
+
+## Post-Align-QC
+
+- Qualimap
+
+## Reporting
+
+- MultiQC
 
 ## More info
 
