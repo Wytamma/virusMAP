@@ -1,5 +1,6 @@
 #!/usr/bin/bash
 
+
 # add channels
 conda config --add channels conda-forge
 conda config --add channels defaults
