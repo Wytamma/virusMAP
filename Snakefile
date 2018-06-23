@@ -143,13 +143,17 @@ rule genomeGenerate:
         from math import log2
         GenomeLength = len(next(SeqIO.parse(input.fasta, "fasta")))
         genomeSAindexNbases = round(min(14, log2(GenomeLength)/2 - 1))
+        if 'exon' in open(input.gff).read():
+            sjdbGTFfile = f"--sjdbGTFfile {input.gff}"
+        else:
+            sjdbGTFfile = ''
         command = f"""
             STAR --runThreadN {threads} \
             --runMode genomeGenerate \
             --genomeDir data/STAR_genome/{wildcards.genbank_id}/ \
             --outFileNamePrefix data/STAR_genome/{wildcards.genbank_id}/ \
             --genomeFastaFiles {input.fasta} \
-            --sjdbGTFfile {input.gff} \
+            {sjdbGTFfile} \
             --sjdbOverhang 100 \
             --sjdbGTFtagExonParentTranscript Parent \
             --genomeSAindexNbases {genomeSAindexNbases}"""
