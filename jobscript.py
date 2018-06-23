@@ -27,4 +27,4 @@ os.system(
     """qsub -v PATH='/homes/22/jc220896/miniconda3/envs/virusMAP/bin:$PATH' \
     -l pmem={{pmem}} \
     -l nodes=1:ppn={{threads}} \
-    {{jobscript}}""".format(jobscript=jobscript, threads=threads)
+    {{jobscript}}""".format(jobscript=jobscript, threads=threads, pmem=pmem)
