@@ -26,7 +26,8 @@ $ `snakemake`
     snakemake -p \
     --latency-wait 60 \
     --cluster "qsub -v PATH='/homes/22/jc220896/miniconda3/envs/virusMAP/bin:$PATH' -d /homes/22/jc220896/virusMAP/ -o /homes/22/jc220896/virusMAP/qsublogs/ -e /homes/22/jc220896/virusMAP/qsublogs/ -l mem={params.mem} -l nodes=1:ppn={threads}" \
-    -j 25
+    -j 25 \
+    --config TESTING=true
 `
 
 ## Pipleline

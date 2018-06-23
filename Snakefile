@@ -1,5 +1,5 @@
 
-configfile: "path/to/config.json"
+configfile: "config.json"
 
 if config["TESTING"]:
     SRA_IDS = ["SRR1553459"]
@@ -7,7 +7,7 @@ if config["TESTING"]:
 else:
     SRA_IDS = config["SRA_IDS"]
     VIRAL_GENBANK_IDS = config["VIRAL_GENBANK_IDS"]
-    
+
 wildcard_constraints:
     #R="^[0-9]$",
     sra_id="^(SRR)[1-9]*$",
