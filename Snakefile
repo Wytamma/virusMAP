@@ -154,7 +154,6 @@ rule genomeGenerate:
             --outFileNamePrefix data/STAR_genome/{wildcards.genbank_id}/ \
             --genomeFastaFiles {input.fasta} \
             {sjdbGTFfile} \
-            --sjdbOverhang 100 \
             --sjdbGTFtagExonParentTranscript Parent \
             --genomeSAindexNbases {genomeSAindexNbases}"""
         shell(command)
