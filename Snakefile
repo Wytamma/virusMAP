@@ -12,8 +12,8 @@ rule all:
     """
     input:
         "results/multiqc.html",
-        "results/jobgraph.png",
-        'rulegraph.png'
+        "results/jobgraph.pdf",
+        'rulegraph.pdf'
 
 rule get_genome_gb:
     """
@@ -223,11 +223,11 @@ rule generate_rulegraph:
     Generate a rulegraph for the workflow.
     """
     output:
-        "rulegraph.png"
+        "rulegraph.pdf"
     shell:
         """
         rm -f {output}
-        snakemake --rulegraph | dot -Tpng > {output}
+        snakemake --rulegraph | dot -Tpdf > {output}
         """
 
 rule generate_jobgraph:
@@ -235,10 +235,10 @@ rule generate_jobgraph:
     Generate a rulegraph for the workflow.
     """
     output:
-        "results/jobgraph.png"
+        "results/jobgraph.pdf"
     shell:
         """
         rm -f {output}
-        snakemake --dag | dot -Tpng > {output}
+        snakemake --dag | dot -Tpdf > {output}
         """
 
