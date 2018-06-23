@@ -1,5 +1,5 @@
 
-configfile: "config.json"
+#configfile: "config.json"
 
 SRA_IDS = ["SRR1553459"]
 IRAL_GENBANK_IDS = ["NC_002549"]
