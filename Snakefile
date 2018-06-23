@@ -4,12 +4,6 @@ configfile: "config.json"
 SRA_IDS = ["SRR1553459"]
 IRAL_GENBANK_IDS = ["NC_002549"]
 
-if config["TESTING"]:
-    SRA_IDS = ["SRR1553459"]
-    IRAL_GENBANK_IDS = ["NC_002549"]
-else:
-    SRA_IDS = config["SRA_IDS"]
-    VIRAL_GENBANK_IDS = config["VIRAL_GENBANK_IDS"]
 
 wildcard_constraints:
     #R="^[0-9]$",
