@@ -1,5 +1,10 @@
+# TODO: config file for samples
+
 SRA_IDS = ["SRR7063616", "SRR7063617", "SRR7063617", "SRR7063618", "SRR7063619", "SRR7063620", "SRR7063621", "SRR7063622", "SRR7063623", "SRR7063624", "SRR7063625"] # SRR1553459 -ebola for testing
 VIRAL_GENBANK_IDS = ["EU493091", "NC_011530"] # NC_002549 -ebola for testing
+
+#SRA_IDS = ["SRR1553459"]
+#VIRAL_GENBANK_IDS = ["NC_002549"]
 
 wildcard_constraints:
     #R="^[0-9]$",
@@ -93,6 +98,7 @@ rule trim_galore:
     output:
         trimmed_reads = expand("data/trimmed_reads/{{srr_id}}_{R}_trimmed.fq.gz", R = [1,2]),
         trimming_report = expand("intermediate/trimming/{{srr_id}}_{R}.fastq.gz_trimming_report.txt", R = [1,2]),
+    threads: 4
     shell:
         """
         # Run trim_galore and save the output to the current directory
@@ -112,7 +118,7 @@ rule fastqc:
     input:
         "data/trimmed_reads/{id}_trimmed.fq.gz"
     params:
-        pmem = '4GB'
+        pmem = '2GB'
     output:
         "results/fastqc/{id}_trimmed_fastqc.html",
         "intermediate/fastqc/{id}_trimmed_fastqc.zip"
@@ -169,7 +175,7 @@ rule STAR:
         genome = "data/STAR_genome/{genbank_id}/Genome",
         trimmed_reads = expand("data/trimmed_reads/{{srr_id}}_{R}_trimmed.fq.gz", R = [1,2])
     params:
-        pmem = '4GB'
+        pmem = '8GB'
     output:
         "data/mapped_reads/{srr_id}.{genbank_id}.Aligned.sortedByCoord.out.bam",
         "intermediate/STAR/{srr_id}.{genbank_id}.Log.final.out"
