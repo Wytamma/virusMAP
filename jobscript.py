@@ -26,5 +26,5 @@ os.system(
     -l pmem=2GB \
     -l nodes=1:ppn={threads} \
     {script}".format(
-        threads=threads, script=jobscript)
+       script=jobscript)
     )
