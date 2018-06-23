@@ -28,4 +28,4 @@ os.system(
     -e /homes/22/jc220896/virusMAP/qsublogs/ \
     -l pmem=2GB \
     -l nodes=1:ppn=1 \
-    {jobscript}"""
+    {{jobscript}}""".format(jobscript=jobscript)
