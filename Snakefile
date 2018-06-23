@@ -135,7 +135,6 @@ rule genomeGenerate:
             --sjdbOverhang 100 \
             --sjdbGTFtagExonParentTranscript Parent \
             --genomeSAindexNbases {genomeSAindexNbases}"""
-        print(command)
         shell(command)
 
         
