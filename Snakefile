@@ -22,14 +22,14 @@ rule all:
         "results/jobgraph.pdf",
         'rulegraph.pdf'
     params:
-        pmem = '1GB'
+        mem = '1gb'
 
 rule get_genome_gb:
     """
     Retrieve the sequence in gb format from ncbi.
     """
     params:
-        pmem = '1GB'
+        mem = '1gb'
     output:
         "data/viral_genome/{genbank_id}.gb"
     run:
@@ -47,7 +47,7 @@ rule convert_gb_to_fasta:
     input:
         "data/viral_genome/{genbank_id}.gb"
     params:
-        pmem = '1GB'
+        mem = '1gb'
     output:
         "data/viral_genome/{genbank_id}.fa"
     run:
@@ -59,7 +59,7 @@ rule get_genome_gff:
     Retrieve the sequence in gff format from ncbi.
     """
     params:
-        pmem = '1GB'
+        mem = '1gb'
     output:
         "data/viral_genome/{genbank_id}.gff"
     shell:
@@ -77,7 +77,7 @@ rule get_reads_fastq:
     params:
         last_one=lambda wildcards : wildcards.srr_id[-1:],
         first_six=lambda wildcards : wildcards.srr_id[:6],
-        pmem = '1GB',
+        mem = '1gb',
     shell:
         """
         curl -L \
@@ -89,12 +89,14 @@ rule get_reads_fastq:
 rule trim_galore:
     """
     Run Trim Galore! on a FASTQ file pair.
+
+    30mins for 1gb of FASTQ with 4gb of RAM
     """
     input:
         "data/raw_reads/{srr_id}_1.fastq.gz",
         "data/raw_reads/{srr_id}_2.fastq.gz"
     params:
-        pmem = '4GB'
+        mem = '4gb'
     output:
         trimmed_reads = expand("data/trimmed_reads/{{srr_id}}_{R}_trimmed.fq.gz", R = [1,2]),
         trimming_report = expand("intermediate/trimming/{{srr_id}}_{R}.fastq.gz_trimming_report.txt", R = [1,2]),
@@ -118,7 +120,7 @@ rule fastqc:
     input:
         "data/trimmed_reads/{id}_trimmed.fq.gz"
     params:
-        pmem = '2GB'
+        mem = '2gb'
     output:
         "results/fastqc/{id}_trimmed_fastqc.html",
         "intermediate/fastqc/{id}_trimmed_fastqc.zip"
@@ -140,7 +142,7 @@ rule genomeGenerate:
         fasta = "data/viral_genome/{genbank_id}.fa",
         gff = "data/viral_genome/{genbank_id}.gff",
     params:
-        pmem = '2GB'
+        mem = '2gb'
     output:
         "data/STAR_genome/{genbank_id}/Genome"
     threads: 1
@@ -175,7 +177,7 @@ rule STAR:
         genome = "data/STAR_genome/{genbank_id}/Genome",
         trimmed_reads = expand("data/trimmed_reads/{{srr_id}}_{R}_trimmed.fq.gz", R = [1,2])
     params:
-        pmem = '8GB'
+        mem = '4gb'
     output:
         "data/mapped_reads/{srr_id}.{genbank_id}.Aligned.sortedByCoord.out.bam",
         "intermediate/STAR/{srr_id}.{genbank_id}.Log.final.out"
@@ -206,7 +208,7 @@ rule qualimap:
         gff = "data/viral_genome/{genbank_id}.gff",
     params:
         outdir = "intermediate/qualimap/{srr_id}.{genbank_id}",
-        pmem = '4GB'
+        mem = '4gb'
     output:
         "intermediate/qualimap/{srr_id}.{genbank_id}/qualimapReport.html",
     shell:
@@ -233,7 +235,7 @@ rule multiqc:
         expand("intermediate/trimming/{srr_id}_{R}.fastq.gz_trimming_report.txt", srr_id = SRA_IDS, R = [1,2]),
         expand("intermediate/qualimap/{srr_id}.{genbank_id}/qualimapReport.html", srr_id = SRA_IDS, genbank_id = VIRAL_GENBANK_IDS),
     params:
-        pmem = '2GB'
+        mem = '2gb'
     output:
         html = "results/multiqc.html",
         stats = "intermediate/multiqc_general_stats.txt"
@@ -255,7 +257,7 @@ rule generate_rulegraph:
     Generate a rulegraph for the workflow.
     """
     params:
-        pmem = '1GB'
+        mem = '1gb'
     output:
         "rulegraph.pdf"
     shell:
@@ -269,7 +271,7 @@ rule generate_jobgraph:
     Generate a rulegraph for the workflow.
     """
     params:
-        pmem = '1GB'
+        mem = '1gb'
     output:
         "results/jobgraph.pdf"
     shell:

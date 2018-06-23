@@ -21,6 +21,6 @@ print('THEADS:', threads)
 
 os.system(
     """qsub -v PATH='/homes/22/jc220896/miniconda3/envs/virusMAP/bin:$PATH' \
-    -l pmem=2GB \
+    -l mem=2gb \
     -l nodes=1:ppn={{threads}} \
     {{jobscript}}""".format(jobscript=jobscript, threads=threads)
