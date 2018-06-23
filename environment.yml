@@ -1,7 +1,6 @@
 channels:
   - bioconda
   - conda-forge
-  - defaults
 dependencies:
   - biopython=1.70
   - trim-galore=0.4.5
