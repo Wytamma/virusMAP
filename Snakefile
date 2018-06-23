@@ -111,7 +111,7 @@ rule fastqc:
         mv {wildcards.id}_trimmed_fastqc.zip {output[1]}
         """
 
-rule STAR_genomeGenerate:
+rule genomeGenerate:
     """
     Generate genome for mapping.
     """
@@ -139,7 +139,7 @@ rule STAR_genomeGenerate:
         shell(command)
 
         
-rule STAR_mapping:
+rule STAR:
     """
     Map the trimmed reads to the genome with STAR.
      --outFileNamePrefix intermediate/STAR/
