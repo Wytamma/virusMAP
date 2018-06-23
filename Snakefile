@@ -1,5 +1,5 @@
-SRA_IDS = ["SRR1553459"] # SRR1553459 -ebola for testing
-VIRAL_GENBANK_IDS = ["NC_002549"] # NC_002549 -ebola for testing
+SRA_IDS = ["SRR7063616", "SRR7063617", "SRR7063617", "SRR7063618", "SRR7063619", "SRR7063620", "SRR7063621", "SRR7063622", "SRR7063623", "SRR7063624", "SRR7063625"] # SRR1553459 -ebola for testing
+VIRAL_GENBANK_IDS = ["EU493091", "NC_011530"] # NC_002549 -ebola for testing
 
 wildcard_constraints:
     #R="^[0-9]$",
