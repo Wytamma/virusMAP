@@ -16,11 +16,15 @@ rule all:
         "results/multiqc.html",
         "results/jobgraph.pdf",
         'rulegraph.pdf'
+    params:
+        pmem = '1GB'
 
 rule get_genome_gb:
     """
     Retrieve the sequence in gb format from ncbi.
     """
+    params:
+        pmem = '1GB'
     output:
         "data/viral_genome/{genbank_id}.gb"
     run:
@@ -37,6 +41,8 @@ rule convert_gb_to_fasta:
     """
     input:
         "data/viral_genome/{genbank_id}.gb"
+    params:
+        pmem = '1GB'
     output:
         "data/viral_genome/{genbank_id}.fa"
     run:
@@ -47,6 +53,8 @@ rule get_genome_gff:
     """
     Retrieve the sequence in gff format from ncbi.
     """
+    params:
+        pmem = '1GB'
     output:
         "data/viral_genome/{genbank_id}.gff"
     shell:
@@ -63,7 +71,8 @@ rule get_reads_fastq:
         "data/raw_reads/{srr_id}_{R}.fastq.gz"
     params:
         last_one=lambda wildcards : wildcards.srr_id[-1:],
-        first_six=lambda wildcards : wildcards.srr_id[:6]
+        first_six=lambda wildcards : wildcards.srr_id[:6],
+        pmem = '1GB',
     shell:
         """
         curl -L \
@@ -79,6 +88,8 @@ rule trim_galore:
     input:
         "data/raw_reads/{srr_id}_1.fastq.gz",
         "data/raw_reads/{srr_id}_2.fastq.gz"
+    params:
+        pmem = '4GB'
     output:
         trimmed_reads = expand("data/trimmed_reads/{{srr_id}}_{R}_trimmed.fq.gz", R = [1,2]),
         trimming_report = expand("intermediate/trimming/{{srr_id}}_{R}.fastq.gz_trimming_report.txt", R = [1,2]),
@@ -100,6 +111,8 @@ rule fastqc:
     """
     input:
         "data/trimmed_reads/{id}_trimmed.fq.gz"
+    params:
+        pmem = '4GB'
     output:
         "results/fastqc/{id}_trimmed_fastqc.html",
         "intermediate/fastqc/{id}_trimmed_fastqc.zip"
@@ -120,6 +133,8 @@ rule genomeGenerate:
     input:
         fasta = "data/viral_genome/{genbank_id}.fa",
         gff = "data/viral_genome/{genbank_id}.gff",
+    params:
+        pmem = '2GB'
     output:
         "data/STAR_genome/{genbank_id}/Genome"
     threads: 1
@@ -148,6 +163,8 @@ rule STAR:
     input:
         genome = "data/STAR_genome/{genbank_id}/Genome",
         trimmed_reads = expand("data/trimmed_reads/{{srr_id}}_{R}_trimmed.fq.gz", R = [1,2])
+    params:
+        pmem = '4GB'
     output:
         "data/mapped_reads/{srr_id}.{genbank_id}.Aligned.sortedByCoord.out.bam",
         "intermediate/STAR/{srr_id}.{genbank_id}.Log.final.out"
@@ -172,12 +189,13 @@ rule STAR:
 rule qualimap:
     """
     Quality control of alignment
-    """
+    """ 
     input:
         bam = "data/mapped_reads/{srr_id}.{genbank_id}.Aligned.sortedByCoord.out.bam",
         gff = "data/viral_genome/{genbank_id}.gff",
     params:
-        outdir = "intermediate/qualimap/{srr_id}.{genbank_id}"
+        outdir = "intermediate/qualimap/{srr_id}.{genbank_id}",
+        pmem = '4GB'
     output:
         "intermediate/qualimap/{srr_id}.{genbank_id}/qualimapReport.html",
     shell:
@@ -203,12 +221,13 @@ rule multiqc:
         expand("intermediate/fastqc/{srr_id}_{R}_trimmed_fastqc.zip", srr_id = SRA_IDS, R = [1,2]),
         expand("intermediate/trimming/{srr_id}_{R}.fastq.gz_trimming_report.txt", srr_id = SRA_IDS, R = [1,2]),
         expand("intermediate/qualimap/{srr_id}.{genbank_id}/qualimapReport.html", srr_id = SRA_IDS, genbank_id = VIRAL_GENBANK_IDS),
+    params:
+        pmem = '2GB'
     output:
         html = "results/multiqc.html",
         stats = "intermediate/multiqc_general_stats.txt"
     wildcard_constraints:
         R="^[0-9]$",
-
     shell:
         """
         # Run multiQC and keep the html report
@@ -224,6 +243,8 @@ rule generate_rulegraph:
     """
     Generate a rulegraph for the workflow.
     """
+    params:
+        pmem = '1GB'
     output:
         "rulegraph.pdf"
     shell:
@@ -236,6 +257,8 @@ rule generate_jobgraph:
     """
     Generate a rulegraph for the workflow.
     """
+    params:
+        pmem = '1GB'
     output:
         "results/jobgraph.pdf"
     shell:
