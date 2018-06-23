@@ -22,12 +22,10 @@ else:
 
 
 os.system(
-    "qsub -v PATH='/homes/22/jc220896/miniconda3/envs/virusMAP/bin:$PATH' \
+    """qsub -v PATH='/homes/22/jc220896/miniconda3/envs/virusMAP/bin:$PATH' \
     -d /homes/22/jc220896/virusMAP/ \
     -o /homes/22/jc220896/virusMAP/qsublogs/ \
     -e /homes/22/jc220896/virusMAP/qsublogs/ \
     -l pmem=2GB \
     -l nodes=1:ppn=1 \
-    {script}".format(
-        script=jobscript)
-    )
+    {jobscript}"""
