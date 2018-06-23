@@ -8,6 +8,8 @@ VirusMap is a RNA-seq analysis tool built using snakemake. I tried using Magic-B
 
 ## Setup
 
+First clone this repo...
+
 $ `bash setup.sh`
 
 ## Downloading data
