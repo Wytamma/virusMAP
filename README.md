@@ -47,3 +47,6 @@ $ `snakemake`
 ## More info
 
 The ncbi has a good SnakeMake tutorial <https://nbis-reproducible-research.readthedocs.io/en/latest/snakemake/>
+
+Create conda enviroment without prefix:  
+`conda env export | grep -v "^prefix: " > environment.yml`
