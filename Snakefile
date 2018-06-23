@@ -100,7 +100,6 @@ rule trim_galore:
     output:
         trimmed_reads = expand("data/trimmed_reads/{{srr_id}}_{R}_trimmed.fq.gz", R = [1,2]),
         trimming_report = expand("intermediate/trimming/{{srr_id}}_{R}.fastq.gz_trimming_report.txt", R = [1,2]),
-    threads: 4
     shell:
         """
         # Run trim_galore and save the output to the current directory
@@ -120,7 +119,7 @@ rule fastqc:
     input:
         "data/trimmed_reads/{id}_trimmed.fq.gz"
     params:
-        mem = '2gb'
+        mem = '4gb'
     output:
         "results/fastqc/{id}_trimmed_fastqc.html",
         "intermediate/fastqc/{id}_trimmed_fastqc.zip"
@@ -177,7 +176,7 @@ rule STAR:
         genome = "data/STAR_genome/{genbank_id}/Genome",
         trimmed_reads = expand("data/trimmed_reads/{{srr_id}}_{R}_trimmed.fq.gz", R = [1,2])
     params:
-        mem = '4gb'
+        mem = '8gb'
     output:
         "data/mapped_reads/{srr_id}.{genbank_id}.Aligned.sortedByCoord.out.bam",
         "intermediate/STAR/{srr_id}.{genbank_id}.Log.final.out"
