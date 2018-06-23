@@ -145,16 +145,17 @@ rule genomeGenerate:
         genomeSAindexNbases = round(min(14, log2(GenomeLength)/2 - 1))
         if 'exon' in open(input.gff).read():
             sjdbGTFfile = f"--sjdbGTFfile {input.gff}"
+            sjdbGTFtagExonParentTranscript = "--sjdbGTFtagExonParentTranscript Parent"
         else:
             sjdbGTFfile = ''
+            sjdbGTFtagExonParentTranscript = ''
         command = f"""
             STAR --runThreadN {threads} \
             --runMode genomeGenerate \
             --genomeDir data/STAR_genome/{wildcards.genbank_id}/ \
             --outFileNamePrefix data/STAR_genome/{wildcards.genbank_id}/ \
             --genomeFastaFiles {input.fasta} \
-            {sjdbGTFfile} \
-            --sjdbGTFtagExonParentTranscript Parent \
+            {sjdbGTFfile} {sjdbGTFtagExonParentTranscript} \
             --genomeSAindexNbases {genomeSAindexNbases}"""
         shell(command)
 
