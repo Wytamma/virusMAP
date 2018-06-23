@@ -6,6 +6,8 @@ wildcard_constraints:
     sra_id="^(SRR)[1-9]*$",
     #id="\d$"
 
+localrules: all, multiqc
+
 rule all:
     """
     Collect the main outputs of the workflow.
@@ -149,7 +151,7 @@ rule STAR:
     output:
         "data/mapped_reads/{srr_id}.{genbank_id}.Aligned.sortedByCoord.out.bam",
         "intermediate/STAR/{srr_id}.{genbank_id}.Log.final.out"
-    threads: 1
+    threads: 4
     shell:
         """
         STAR --runThreadN 1 \

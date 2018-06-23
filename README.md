@@ -16,7 +16,19 @@ $ `bash setup.sh`
 
 Set `SRA_IDS` and `VIRAL_GENBANK_IDS` in Snakefile
 
+### local
+
 $ `snakemake`
+
+### cluster
+
+`
+    snakemake -p \
+    --latency-wait 60 \
+    --cluster qsub \
+    --jobscript jobscript.py  \
+    -j 10
+`
 
 ## Pipleline
 
