@@ -177,11 +177,11 @@ rule STAR:
         genome = "data/STAR_genome/{genbank_id}/Genome",
         trimmed_reads = expand("data/trimmed_reads/{{srr_id}}_{R}_trimmed.fq.gz", R = [1,2])
     params:
-        mem = '8gb'
+        mem = '10gb'
     output:
         "data/mapped_reads/{srr_id}.{genbank_id}.Aligned.sortedByCoord.out.bam",
         "intermediate/STAR/{srr_id}.{genbank_id}.Log.final.out"
-    threads: 4
+    threads: 12
     shell:
         """
         STAR --runThreadN {threads} \
