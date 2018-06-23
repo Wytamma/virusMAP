@@ -10,13 +10,13 @@ jobscript = sys.argv[1]
 job_properties = read_job_properties(jobscript)
 
 # do something useful with the threads
-threads = job_properties[threads]
+if threads in job_properties:
+    threads = job_properties[threads]
+else:
+    threads = 1
 
 # access property defined in the cluster configuration file (Snakemake >=3.6.0)
 job_properties["cluster"]["time"]
-
-if not threads:
-    threads = 1
 
 os.system(
     "qsub -v PATH='/homes/22/jc220896/miniconda3/envs/virusMAP/bin:$PATH' \
@@ -28,8 +28,3 @@ os.system(
     {script}".format(
         threads=threads, script=jobscript)
     )
-
-snakemake -p \
---latency-wait 60 \
---cluster  \
--j 10
