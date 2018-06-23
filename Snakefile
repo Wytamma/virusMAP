@@ -147,6 +147,7 @@ rule genomeGenerate:
             STAR --runThreadN {threads} \
             --runMode genomeGenerate \
             --genomeDir data/STAR_genome/{wildcards.genbank_id}/ \
+            --outFileNamePrefix data/STAR_genome/{wildcards.genbank_id}/ \
             --genomeFastaFiles {input.fasta} \
             --sjdbGTFfile {input.gff} \
             --sjdbOverhang 100 \
