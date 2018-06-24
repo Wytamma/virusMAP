@@ -267,7 +267,6 @@ rule multiqc:
     Aggregate all results into a MultiQC report.
     """
     input:
-        expand("intermediate/STAR/{srr_id}.{genbank_id}.Log.final.out", srr_id = SRA_IDS, genbank_id = VIRAL_GENBANK_IDS),
         expand("intermediate/fastqc/{srr_id}_{R}_trimmed_fastqc.zip", srr_id = SRA_IDS, R = [1,2]),
         expand("intermediate/trimming/{srr_id}_{R}.fastq.gz_trimming_report.txt", srr_id = SRA_IDS, R = [1,2]),
         expand("intermediate/qualimap/{srr_id}.{genbank_id}.{alinger}/qualimapReport.html", srr_id = SRA_IDS, genbank_id = VIRAL_GENBANK_IDS, alinger = ALIGNERS),
