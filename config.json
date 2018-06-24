@@ -16,5 +16,9 @@
     "VIRAL_GENBANK_IDS": [
         "EU493091", 
         "NC_011530"
+        ],
+        "ALIGNERS": [
+            "bwa", 
+            "STAR"
         ]
 }
