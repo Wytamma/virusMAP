@@ -24,8 +24,8 @@ rule all:
     """
     input:
         "results/multiqc.html",
-        "results/jobgraph.pdf",
-        'rulegraph.pdf'
+        "results/jobgraph.png",
+        'rulegraph.png'
     params:
         mem = '1gb'
 
@@ -296,11 +296,11 @@ rule generate_rulegraph:
     params:
         mem = '1gb'
     output:
-        "rulegraph.pdf"
+        "rulegraph.png"
     shell:
         """
         rm -f {output}
-        snakemake --rulegraph | dot -Tpdf > {output}
+        snakemake --rulegraph | dot -Tpng > {output}
         """
 
 rule generate_jobgraph:
@@ -310,10 +310,10 @@ rule generate_jobgraph:
     params:
         mem = '1gb'
     output:
-        "results/jobgraph.pdf"
+        "results/jobgraph.png"
     shell:
         """
         rm -f {output}
-        snakemake --dag | dot -Tpdf > {output}
+        snakemake --dag | dot -Tpng > {output}
         """
 

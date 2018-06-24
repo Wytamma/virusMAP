@@ -4,7 +4,7 @@ VirusMap is a RNA-seq analysis tool built using snakemake. I tried using Magic-B
 
 ## Directed acyclic graph aka the pipeline
 
-![virusMAP DAG](./rulegraph.pdf "virusMAP DAG")
+![virusMAP DAG](./rulegraph.png "virusMAP DAG")
 
 ## Setup
 
