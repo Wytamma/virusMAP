@@ -10,3 +10,4 @@ dependencies:
   - fastqc=0.11.7
   - qualimap=2.2.2a
   - multiqc=1.5
+  - bwa=0.7.17

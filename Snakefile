@@ -1,4 +1,4 @@
-
+# TODO: mapping to a combined genome 
 configfile: "config.json"
 
 if config["TESTING"]:
@@ -179,9 +179,10 @@ rule STAR:
         genome = "data/STAR_genome/{genbank_id}/Genome",
         trimmed_reads = expand("data/trimmed_reads/{{srr_id}}_{R}_trimmed.fq.gz", R = [1,2])
     params:
-        mem = '8gb'
+        mem = '8gb',
+        prefix = 'data/mapped_reads/{srr_id}.{genbank_id}'
     output:
-        "data/mapped_reads/{srr_id}.{genbank_id}.Aligned.sortedByCoord.out.bam",
+        "data/mapped_reads/{srr_id}.{genbank_id}.STAR.bam",
         "intermediate/STAR/{srr_id}.{genbank_id}.Log.final.out"
     threads: 4
     shell:
@@ -194,25 +195,55 @@ rule STAR:
         --readFilesCommand gunzip -c 
 
         # move log file 
-        mv data/mapped_reads/{wildcards.srr_id}.{wildcards.genbank_id}.Log.final.out {output[1]}
+        mv {params.prefix}.Log.final.out {output[1]}
+
+        # rename 
+        mv {params.prefix}.Aligned.sortedByCoord.out.bam data/mapped_reads/{wildcards.srr_id}.{wildcards.genbank_id}.STAR.bam
 
         # delete others 
-        rm data/mapped_reads/{wildcards.srr_id}.{wildcards.genbank_id}.Log.*
-        rm data/mapped_reads/{wildcards.srr_id}.{wildcards.genbank_id}.SJ.out.tab
+        rm {params.prefix}.Log.*
+        rm {params.prefix}.SJ.out.tab
         """
+
+rule bwa_index:
+    input:
+        "data/viral_genome/{genbank_id}.fa"
+    output:
+        expand("data/bwa_index/{{genbank_id}}.fa.{extention}", extention = ['bwt', 'ann', 'amb', 'pac', 'sa'])
+    shell:
+        """
+        bwa index {input}
+        mv {input}.* data/bwa_index/
+        """
+
+rule bwa_map:
+    input:
+        expand("data/bwa_index/{{genbank_id}}.fa.{extention}", extention = ['bwt', 'ann', 'amb', 'pac', 'sa']),
+        trimmed_reads = expand("data/trimmed_reads/{{srr_id}}_{R}_trimmed.fq.gz", R = [1,2])
+    output:
+        "data/mapped_reads/{srr_id}.{genbank_id}.bwa.bam"
+    params:
+        db_prefix = "data/bwa_index/{genbank_id}.fa"
+    threads: 4
+    shell:
+        """
+        bwa mem -t 8 {params.db_prefix} {input.trimmed_reads} | samtools sort - -@{threads} -o {output}"""
+
 
 rule qualimap:
     """
     Quality control of alignment
     """ 
     input:
-        bam = "data/mapped_reads/{srr_id}.{genbank_id}.Aligned.sortedByCoord.out.bam",
+        bam = "data/mapped_reads/{srr_id}.{genbank_id}.{aligner}.bam",
         gff = "data/viral_genome/{genbank_id}.gff",
     params:
-        outdir = "intermediate/qualimap/{srr_id}.{genbank_id}",
-        mem = '4gb'
+        outdir = "intermediate/qualimap/{srr_id}.{genbank_id}.{aligner}",
+        mem = '4gb',
+        id = '{srr_id}.{genbank_id}.{aligner}'
     output:
-        "intermediate/qualimap/{srr_id}.{genbank_id}/qualimapReport.html",
+        "intermediate/qualimap/{srr_id}.{genbank_id}.{aligner}/qualimapReport.html",
+        "results/qualimap/{srr_id}.{genbank_id}.{aligner}.coverage.png"
     shell:
         """
         qualimap bamqc \
@@ -223,7 +254,8 @@ rule qualimap:
 
         #copy coverage results file
         mkdir -p results/qualimap/
-        cp {params.outdir}/images_qualimapReport/genome_coverage_across_reference.png results/qualimap/{wildcards.srr_id}.{wildcards.genbank_id}.coverage.png
+        cp {params.outdir}/images_qualimapReport/genome_coverage_across_reference.png \
+        results/qualimap/{params.id}.coverage.png
         """
 
 
@@ -235,7 +267,7 @@ rule multiqc:
         expand("intermediate/STAR/{srr_id}.{genbank_id}.Log.final.out", srr_id = SRA_IDS, genbank_id = VIRAL_GENBANK_IDS),
         expand("intermediate/fastqc/{srr_id}_{R}_trimmed_fastqc.zip", srr_id = SRA_IDS, R = [1,2]),
         expand("intermediate/trimming/{srr_id}_{R}.fastq.gz_trimming_report.txt", srr_id = SRA_IDS, R = [1,2]),
-        expand("intermediate/qualimap/{srr_id}.{genbank_id}/qualimapReport.html", srr_id = SRA_IDS, genbank_id = VIRAL_GENBANK_IDS),
+        expand("intermediate/qualimap/{srr_id}.{genbank_id}.{alinger}/qualimapReport.html", srr_id = SRA_IDS, genbank_id = VIRAL_GENBANK_IDS, alinger = ['bwa', 'STAR']),
     params:
         mem = '2gb'
     output:
