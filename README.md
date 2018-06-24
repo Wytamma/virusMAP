@@ -14,7 +14,7 @@ $ `bash setup.sh`
 
 ## Run
 
-Set `SRA_IDS` and `VIRAL_GENBANK_IDS` in config.js
+Set `SRA_IDS`, `VIRAL_GENBANK_IDS` and `ALIGNERS` in config.js
 
 ### local
 

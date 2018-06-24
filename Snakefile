@@ -6,10 +6,10 @@ if config["TESTING"]:
     SRA_IDS = ["SRR1553459"]
     VIRAL_GENBANK_IDS = ["NC_002549"]
 else:
-    SRA_IDS = config["SRA_IDS"]
-    VIRAL_GENBANK_IDS = config["VIRAL_GENBANK_IDS"]
+    SRA_IDS = config["SRA_IDS"].split()
+    VIRAL_GENBANK_IDS = config["VIRAL_GENBANK_IDS"].split()
 
-ALIGNERS = config["ALIGNERS"]
+ALIGNERS = config["ALIGNERS"].split()
 
 wildcard_constraints:
     #R="^[0-9]$",
