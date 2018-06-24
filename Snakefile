@@ -185,7 +185,8 @@ rule STAR:
         trimmed_reads = expand("data/trimmed_reads/{{srr_id}}_{R}_trimmed.fq.gz", R = [1,2])
     params:
         mem = '8gb',
-        prefix = 'data/mapped_reads/{srr_id}.{genbank_id}.STAR'
+        datadirprefix = 'data/mapped_reads/{srr_id}.{genbank_id}.STAR',
+        prefix = '{srr_id}.{genbank_id}.STAR'
     output:
         "data/mapped_reads/{srr_id}.{genbank_id}.STAR.bam",
         "intermediate/STAR/{srr_id}.{genbank_id}.Log.final.out"
@@ -196,22 +197,24 @@ rule STAR:
         --genomeDir data/STAR_genome/{wildcards.genbank_id} \
         --readFilesIn {input.trimmed_reads} \
         --outSAMtype BAM SortedByCoordinate \
-        --outFileNamePrefix "{params.prefix}." \
+        --outFileNamePrefix "{params.datadirprefix}." \
         --readFilesCommand gunzip -c \
         --outReadsUnmapped Fastx
 
         # move log file 
-        mv {params.prefix}.Log.final.out {output[1]}
+        mv {params.datadirprefix}.Log.final.out {output[1]}
 
         # move unmapped 
-        mv {params.prefix}.Unmapped.out.mate* data/unmapped_reads/
+        mkdir -p data/unmapped_reads/
+        mv {params.datadirprefix}.Unmapped.out.mate1 data/unmapped_reads/{params.prefix}.Unmapped.mate1.fq
+        mv {params.datadirprefix}.Unmapped.out.mate2 data/unmapped_reads/{params.prefix}.Unmapped.mate2.fq
 
         # rename 
-        mv {params.prefix}.Aligned.sortedByCoord.out.bam {params.prefix}.bam
+        mv {params.datadirprefix}.Aligned.sortedByCoord.out.bam {params.datadirprefix}.bam
 
         # delete others 
-        rm {params.prefix}.Log.*
-        rm {params.prefix}.SJ.out.tab
+        rm {params.datadirprefix}.Log.*
+        rm {params.datadirprefix}.SJ.out.tab
         """
 
 rule bwa_index:
