@@ -25,6 +25,7 @@ conda install --yes -n virusMAP star=2.6.0c
 conda install --yes -n virusMAP qualimap=2.2.2a
 conda install --yes -n virusMAP multiqc=1.5
 conda install --yes -n virusMAP bwa=0.7.17
+conda install --yes -n virusMAP minimap2=2.11
 
 echo ''
 echo '**************************************************'

@@ -1,10 +1,12 @@
 # TODO: mapping to a combined genome https://groups.google.com/forum/#!topic/rna-star/TqOdXiEFYrI
+# TODO: Magic-Blast
+# TODO: minimap2?
 
 configfile: "config.json"
 
 if config["TESTING"]:
-    SRA_IDS = ["SRR1553459"]
-    VIRAL_GENBANK_IDS = ["NC_002549"]
+    SRA_IDS = ["SRR1553459"] # ebola
+    VIRAL_GENBANK_IDS = ["NC_002549"] # ebola
 else:
     SRA_IDS = config["SRA_IDS"].split()
     VIRAL_GENBANK_IDS = config["VIRAL_GENBANK_IDS"].split()
@@ -183,7 +185,7 @@ rule STAR:
         trimmed_reads = expand("data/trimmed_reads/{{srr_id}}_{R}_trimmed.fq.gz", R = [1,2])
     params:
         mem = '8gb',
-        prefix = 'data/mapped_reads/{srr_id}.{genbank_id}'
+        prefix = 'data/mapped_reads/{srr_id}.{genbank_id}.STAR'
     output:
         "data/mapped_reads/{srr_id}.{genbank_id}.STAR.bam",
         "intermediate/STAR/{srr_id}.{genbank_id}.Log.final.out"
@@ -194,14 +196,18 @@ rule STAR:
         --genomeDir data/STAR_genome/{wildcards.genbank_id} \
         --readFilesIn {input.trimmed_reads} \
         --outSAMtype BAM SortedByCoordinate \
-        --outFileNamePrefix "data/mapped_reads/{wildcards.srr_id}.{wildcards.genbank_id}." \
-        --readFilesCommand gunzip -c 
+        --outFileNamePrefix "{params.prefix}." \
+        --readFilesCommand gunzip -c \
+        --outReadsUnmapped Fastx
 
         # move log file 
         mv {params.prefix}.Log.final.out {output[1]}
 
+        # move unmapped 
+        mv {params.prefix}.Unmapped.out.mate* data/unmapped_reads/
+
         # rename 
-        mv {params.prefix}.Aligned.sortedByCoord.out.bam data/mapped_reads/{wildcards.srr_id}.{wildcards.genbank_id}.STAR.bam
+        mv {params.prefix}.Aligned.sortedByCoord.out.bam {params.prefix}.bam
 
         # delete others 
         rm {params.prefix}.Log.*
@@ -230,8 +236,20 @@ rule bwa_map:
     threads: 4
     shell:
         """
-        bwa mem -t 8 {params.db_prefix} {input.trimmed_reads} | samtools sort - -@{threads} -o {output}"""
+        bwa mem -t 8 {params.db_prefix} {input.trimmed_reads} | samtools sort - -@{threads} -o {output}
+        """
 
+rule minimap2:
+    input:
+        ref = "data/viral_genome/{genbank_id}.fa",
+        trimmed_reads = expand("data/trimmed_reads/{{srr_id}}_{R}_trimmed.fq.gz", R = [1,2])
+    output:
+        "data/mapped_reads/{srr_id}.{genbank_id}.minimap2.bam"
+    threads: 4
+    shell:
+        """
+        minimap2 -ax sr {input.ref} {input.trimmed_reads} | samtools sort - -@{threads} -o {output}
+        """
 
 rule qualimap:
     """
@@ -246,7 +264,6 @@ rule qualimap:
         id = '{srr_id}.{genbank_id}.{aligner}'
     output:
         "intermediate/qualimap/{srr_id}.{genbank_id}.{aligner}/qualimapReport.html",
-        "results/qualimap/{srr_id}.{genbank_id}.{aligner}.coverage.png"
     shell:
         """
         qualimap bamqc \
@@ -257,8 +274,11 @@ rule qualimap:
 
         #copy coverage results file
         mkdir -p results/qualimap/
-        cp {params.outdir}/images_qualimapReport/genome_coverage_across_reference.png \
-        results/qualimap/{params.id}.coverage.png
+
+        if [ -f {params.outdir}/images_qualimapReport/genome_coverage_across_reference.png ]; then
+            cp {params.outdir}/images_qualimapReport/genome_coverage_across_reference.png \
+            results/qualimap/{params.id}.coverage.png
+        fi
         """
 
 
