@@ -20,7 +20,7 @@ Set `SRA_IDS`, `VIRAL_GENBANK_IDS` and `ALIGNERS` in config.js
 
 $ `snakemake`
 
-config can also be specified from the command line:
+config can also be specified from the command line:  
 $ `snakemake --config SRA_IDS="SRR1553459" VIRAL_GENBANK_IDS="NC_002549" ALIGNERS="minimap2"`
 
 A tested dataset can be run with:  
