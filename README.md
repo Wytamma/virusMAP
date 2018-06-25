@@ -18,7 +18,11 @@ Set `SRA_IDS`, `VIRAL_GENBANK_IDS` and `ALIGNERS` in config.js
 
 ### local
 
-$ `snakemake`  
+$ `snakemake`
+
+config can also be specified from the command line:
+$ `snakemake --config SRA_IDS="SRR1553459" VIRAL_GENBANK_IDS="NC_002549" ALIGNERS="minimap2"`
+
 A tested dataset can be run with:  
 $ `snakemake --config TESTING=true`
 
@@ -27,7 +31,7 @@ $ `snakemake --config TESTING=true`
 $ `
 snakemake -p
 --latency-wait 60
---cluster "qsub -v PATH='/homes/22/jc220896/miniconda3/envs/virusMAP/bin:$PATH' -d /homes/22/jc220896/virusMAP/ -o /homes/22/jc220896/virusMAP/qsublogs/ -e /homes/22/jc220896/virusMAP/qsublogs/ -l mem={params.mem} -l nodes=1:ppn={threads}"
+--cluster "qsub -v PATH='<path_to_miniconda_bin>:$PATH' -d <outdir> -o <outdir>/qsublogs/ -e <outdir>/qsublogs/ -l mem={params.mem} -l nodes=1:ppn={threads}"
 -j 25
 `
 
