@@ -222,6 +222,8 @@ rule bwa_index:
         "data/viral_genome/{genbank_id}.fa"
     output:
         expand("data/bwa_index/{{genbank_id}}.fa.{extention}", extention = ['bwt', 'ann', 'amb', 'pac', 'sa'])
+    params:
+        mem = '8gb',
     shell:
         """
         bwa index {input}
@@ -235,7 +237,8 @@ rule bwa_map:
     output:
         "data/mapped_reads/{srr_id}.{genbank_id}.bwa.bam"
     params:
-        db_prefix = "data/bwa_index/{genbank_id}.fa"
+        db_prefix = "data/bwa_index/{genbank_id}.fa",
+        mem = '8gb',
     threads: 4
     shell:
         """
@@ -248,9 +251,12 @@ rule minimap2:
         trimmed_reads = expand("data/trimmed_reads/{{srr_id}}_{R}_trimmed.fq.gz", R = [1,2])
     output:
         "data/mapped_reads/{srr_id}.{genbank_id}.minimap2.bam"
+    params:
+        mem = '8gb',
     threads: 4
     shell:
         """
+        # -a flag returns both mapped and unmapped reads.
         minimap2 -ax sr {input.ref} {input.trimmed_reads} | samtools sort - -@{threads} -o {output}
         """
 

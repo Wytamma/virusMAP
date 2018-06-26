@@ -50,8 +50,10 @@ snakemake -p
 
 ### Mapping
 
-- STAR
-- Maybe Magic-Blast
+- STAR doesn't work well on datasets that contain a bunch of reads that don't map. 
+- Maybe Magic-Blast locally?
+- bwa mem has some trouble with the pair-end-reads...
+- minimap2 looks good so far...
 
 ### Post-Align-QC
 
