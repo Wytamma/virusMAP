@@ -184,13 +184,13 @@ rule STAR:
         genome = "data/STAR_genome/{genbank_id}/Genome",
         trimmed_reads = expand("data/trimmed_reads/{{srr_id}}_{R}_trimmed.fq.gz", R = [1,2])
     params:
-        mem = '8gb',
+        mem = config["MAPPERMEM"],
         datadirprefix = 'data/mapped_reads/{srr_id}.{genbank_id}.STAR',
         prefix = '{srr_id}.{genbank_id}.STAR'
     output:
         "data/mapped_reads/{srr_id}.{genbank_id}.STAR.bam",
         "intermediate/STAR/{srr_id}.{genbank_id}.Log.final.out"
-    threads: 4
+    threads: config["MAPPERTHREADS"]
     shell:
         """
         STAR --runThreadN {threads} \
@@ -223,7 +223,7 @@ rule bwa_index:
     output:
         expand("data/bwa_index/{{genbank_id}}.fa.{extention}", extention = ['bwt', 'ann', 'amb', 'pac', 'sa'])
     params:
-        mem = '8gb',
+        mem = config["MAPPERMEM"],
     shell:
         """
         bwa index {input}
@@ -238,8 +238,8 @@ rule bwa_map:
         "data/mapped_reads/{srr_id}.{genbank_id}.bwa.bam"
     params:
         db_prefix = "data/bwa_index/{genbank_id}.fa",
-        mem = '8gb',
-    threads: 4
+        mem = config["MAPPERMEM"],
+    threads: config["MAPPERTHREADS"]
     shell:
         """
         bwa mem -t 8 {params.db_prefix} {input.trimmed_reads} | samtools sort - -@{threads} -o {output}
@@ -252,8 +252,8 @@ rule minimap2:
     output:
         "data/mapped_reads/{srr_id}.{genbank_id}.minimap2.bam"
     params:
-        mem = '8gb'
-    threads: 4
+        mem = config["MAPPERMEM"]
+    threads: config["MAPPERTHREADS"]
     shell:
         """
         # -a flag returns both mapped and unmapped reads.
