@@ -252,7 +252,7 @@ rule minimap2:
     output:
         "data/mapped_reads/{srr_id}.{genbank_id}.minimap2.bam"
     params:
-        mem = '8gb',
+        mem = '8gb'
     threads: 4
     shell:
         """
